@@ -1,0 +1,14 @@
+<html>
+    <head>
+      {% if title %}
+      <title>{{ title }} - Flow For You</title>
+      {% else %}
+      <title>Flow For You</title>
+      {% endif %}
+    </head>
+    <body>
+        <div><a href="/index">Flow For You</a></div>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+</html>
