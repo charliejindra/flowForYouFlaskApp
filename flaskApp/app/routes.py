@@ -13,3 +13,7 @@ def about():
 @app.route('/resources')
 def resources():
     return render_template('resources.html')
+
+@app.route('/settings')
+def settings():
+    return render_template('settings.html')
