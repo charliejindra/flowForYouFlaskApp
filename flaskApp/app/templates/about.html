@@ -1,9 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 200px;
+    background-color: #f1f1f1;
+}
+
+li a {
+    display: block;
+    color: #000;
+    padding: 8px 16px;
+}
+
+li a:hover {
+    background-color: #555;
+    color: white;
+}
+
+</style>
     <h1>About</h1>
-    <a href="/resources">Resources</a>
-    <a href="/settings">Settings</a>
+    <li><a href="/resources">Resources</a></li>
+    <li><a href="/settings">Settings</a></li>
 
 <a><br> Our mission is to provide users access to the nearest locations of menstruation dispensers on their college campus. 
     <br> The goal of this project is to help students have easier ways to access menstruation products, regardless of their financial situation.</br>
