@@ -1,22 +1,29 @@
-<head><link rel="stylesheet" type="text/css" href="style.css"></head>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}">
+
 {% extends "base.html" %}
 
 {% block content %}
 
-    <h1>About</h1>
-    <strong><nav>
-    <ul class = "menu">
+    <ul>
+    <li><a href="/index">Main Menu</a></li>
+    <li><a href="/about">About</a></li>
     <li><a href="/resources">Resources</a></li>
     <li><a href="/settings">Settings</a></li>
     </ul>
-    </nav></strong>
-<a><br> Our mission is to provide users access to the nearest locations of menstruation dispensers on their college campus. 
-    <br> The goal of this project is to help students have easier ways to access menstruation products, regardless of their financial situation.</br>
+
+    <br> 
+    Our mission is to provide users access to the nearest locations of 
+    menstruation dispensers on their college campus. 
+    <br>
+    <p>
+    The goal of this project is to help students have easier ways to access menstruation products, regardless of their financial situation.</br>
     About Aunt Flow: Aunt Flow was founded in Columbus, Ohio in 2016 by Claire Coder. 
     The Company sells dispensers that hold both tampons and pads. 
     Their slogan is: “ Toilet paper is offered for free, why aren't tampons? 
     People helping people. Period.”. Their mission is to provide 100% organic 
-    cotton menstrual products for people and businesses. <br>
+    cotton menstrual products for people and businesses.
+    </p>
+    <br>
 
 About Claire Coder: 
 

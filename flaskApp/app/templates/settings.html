@@ -1,8 +1,12 @@
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}">
+
 {% extends "base.html" %}
 
 {% block content %}
-
-    <h1>Settings</h1>
-    <a href="/about">About</a>
-    <a href="/resources">Resources</a>
+    <ul>
+    <li><a href="/index">Main Menu</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/resources">Resources</a></li>
+    <li><a href="/settings">Settings</a></li>
+    </ul>
 {% endblock %}
