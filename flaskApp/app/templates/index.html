@@ -3,39 +3,43 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div>
-        <ul>
-            <li><a class="active" href="/index">Main Menu</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/resources">Resources</a></li>
-            <li><a href="/settings">Settings</a></li>
-        </ul>
-    </div>
-        <div id="map"></div>
 
-<style>
-    /* Set the size of the div element that contains the map */
-   #map {
-     height: 100%;  /* The height is 400 pixels */
-     width: 100%;  /* The width is the width of the web page */
-    }
- </style>
-
-
-    <script>
-// Initialize and add the map
+<script>
+        // Initialize and add the map
 function initMap() {
-  // The location of Kent State (only for testing purposes)
-  var kent_state = {lat: 41.1406508, lng: -81.3461343};
+        // Creates the map, centered on Kent State University
+        var kent_State = {lat: 41.1406508, lng: -81.3461343};
+        var map = new google.maps.Map(
+            document.getElementById('map'), {zoom: 15, center: kent_State});
+    
+        var dispensers = [
+        ['Kent State University', 41.1406508, -81.3461343, 1],
+        ['Student Recreation Center', 41.141588, -81.340043, 2],
+        ];
 
-  var map = new google.maps.Map(
-      document.getElementById('map'), {zoom: 10, center: kent_state});
+        // Loop to iterate through the dispenser locations
+        for (i = 0; i < dispensers.length; i++) {  
+        marker = new google.maps.Marker({
+        position: new google.maps.LatLng(dispensers[i][1], dispensers[i][2]),
+        map: map
+      });
 
-  var marker = new google.maps.Marker({position: kent_state, map: map});
+    }
 }
-    </script>
+</script>
 
 <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgh8GWzkyvEprIotnrv-9ZYWvNQXpBCT8&callback=initMap">
 </script>
+
+<div id="map"></div>
+<div>
+    <ul>
+        <li><a class="active" href="/index">Main Menu</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/resources">Resources</a></li>
+        <li><a href="/settings">Settings</a></li>
+    </ul>
+</div>
+
 {% endblock %}
