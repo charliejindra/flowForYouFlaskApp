@@ -3,38 +3,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Welcome to Aunt Flow! </h1>
-<br>
-<ul>
-<li><a class="active" href="/index">Main Menu</a></li>
-<li><a href="/about">About</a></li>
-<li><a href="/resources">Resources</a></li>
-<li><a href="/settings">Settings</a></li>
-</ul>
-<br>
+    <div>
+        <ul>
+            <li><a class="active" href="/index">Main Menu</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/resources">Resources</a></li>
+            <li><a href="/settings">Settings</a></li>
+        </ul>
+    </div>
+        <div id="map"></div>
+
 <style>
-#map {
-    height: 400px;
-    width: 100%;
-}
-</style>
-<h3>Map of Campus </h3>
-<div id="map"></div>
-<script>
-    // Initialize and add the map
-    function initMap() {
-      // The location of Uluru
-      var uluru = {lat: -25.344, lng: 131.036};
-      // The map, centered at Uluru
-      var map = new google.maps.Map(
-          document.getElementById('map'), {zoom: 4, center: uluru});
-      // The marker, positioned at Uluru
-      var marker = new google.maps.Marker({position: uluru, map: map});
+    /* Set the size of the div element that contains the map */
+   #map {
+     height: 100%;  /* The height is 400 pixels */
+     width: 100%;  /* The width is the width of the web page */
     }
-        </script>
+ </style>
+
+
+    <script>
+// Initialize and add the map
+function initMap() {
+  // The location of Kent State (only for testing purposes)
+  var kent_state = {lat: 41.1406508, lng: -81.3461343};
+
+  var map = new google.maps.Map(
+      document.getElementById('map'), {zoom: 10, center: kent_state});
+
+  var marker = new google.maps.Marker({position: kent_state, map: map});
+}
+    </script>
+
 <script async defer
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgh8GWzkyvEprIotnrv-9ZYWvNQXpBCT8&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgh8GWzkyvEprIotnrv-9ZYWvNQXpBCT8&callback=initMap">
 </script>
-
-
 {% endblock %}
