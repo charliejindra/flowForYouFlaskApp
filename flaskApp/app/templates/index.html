@@ -3,22 +3,43 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div>
-        <ul>
-            <li><a class="active" href="/index">Main Menu</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/resources">Resources</a></li>
-            <li><a href="/settings">Settings</a></li>
-        </ul>
-    </div>
-        <div id="map"></div>
 
+    
+    
+        
+        <div id="map">
+            
+                <div class = "nav_bar">
+                    <ul>
+                        <li><a class="active" href="/index">Main Menu</a></li>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="/resources">Resources</a></li>
+                        <li><a href="/settings">Settings</a></li>
+                    </ul>
+                </div>
+          
+        </div>
+        
 <style>
     /* Set the size of the div element that contains the map */
    #map {
-     height: 100%;  /* The height is 400 pixels */
-     width: 100%;  /* The width is the width of the web page */
+     height: 100%;   /*The height is 400 pixels */
+     width: 100%;   /*The width is the width of the web page */
+     background-position: center; 
+     background-size: cover;
+     z-index: 0; 
+     margin: 0;
+     padding: 0;
+
     }
+
+    #nav_bar {
+        width: 100%;
+        z-index: 1; 
+        position: fixed;
+        float: left;
+    }
+  
  </style>
 
 
@@ -29,7 +50,7 @@ function initMap() {
   var kent_state = {lat: 41.1406508, lng: -81.3461343};
 
   var map = new google.maps.Map(
-      document.getElementById('map'), {zoom: 10, center: kent_state});
+      document.getElementById('map'), {zoom: 15, center: kent_state});
 
   var marker = new google.maps.Marker({position: kent_state, map: map});
 }
