@@ -80,14 +80,14 @@ function initMap() {
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgh8GWzkyvEprIotnrv-9ZYWvNQXpBCT8&callback=initMap">
 </script>
 
-<div id="map"></div>
-<div>
-    <ul>
-        <li><a class="active" href="/index">Main Menu</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/resources">Resources</a></li>
-        <li><a href="/settings">Settings</a></li>
-    </ul>
+<div id="mapNavContainer">
+    <div id="map"></div>
+        <ul id="navBarMap">
+            <li><a class="active" href="/index">Main Menu</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/resources">Resources</a></li>
+            <li><a href="/settings">Settings</a></li>
+        </ul>
 </div>
 
 {% endblock %}
