@@ -45,18 +45,34 @@ function initMap() {
     }
 
         var dispensers = [
-        ['Kent State University', 41.1406508, -81.3461343, 1],
-        ['Student Recreation Center', 41.141588, -81.340043, 2],
+        
+        // This location will be removed once we get all the dispenser locations.
+        ['Kent State University', 41.1406508, -81.3461343, '<h1><b>Kent State University</b></h1>' 
+        + '<p><b>More Information:</b>' + '<a href="https://www.kent.edu/">'+
+        ' https://www.kent.edu/</a>'],
+        
+        ['Student Recreation Center', 41.141588, -81.340043, '<h1><b>Student Recreation and Wellness Center</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Information:</b>' + ' Located in the basement locker rooms.</p>'
+        + '<p><b>More Information:</b>' + '<a href="https://www.kent.edu/recservices">'+
+        ' https://www.kent.edu/recservices</a>'],
         ];
+        
+        var infowindow = new google.maps.InfoWindow();
 
-        // Loop to iterate through the dispenser locations
         for (i = 0; i < dispensers.length; i++) {  
         marker = new google.maps.Marker({
         position: new google.maps.LatLng(dispensers[i][1], dispensers[i][2]),
         map: map
-      });
+        });
 
-    }
+        google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+          infowindow.setContent(dispensers[i][3]);
+          infowindow.open(map, marker);
+        }
+        })(marker, i));
+
+         }
 }
 </script>
 
