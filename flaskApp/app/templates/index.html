@@ -4,59 +4,90 @@
 
 {% block content %}
 
-    
-    
-        
-        <div id="map">
-            
-                <div class = "nav_bar">
-                    <ul>
-                        <li><a class="active" href="/index">Main Menu</a></li>
-                        <li><a href="/about">About</a></li>
-                        <li><a href="/resources">Resources</a></li>
-                        <li><a href="/settings">Settings</a></li>
-                    </ul>
-                </div>
-          
-        </div>
-        
-<style>
-    /* Set the size of the div element that contains the map */
-   #map {
-     height: 100%;   /*The height is 400 pixels */
-     width: 100%;   /*The width is the width of the web page */
-     background-position: center; 
-     background-size: cover;
-     z-index: 0; 
-     margin: 0;
-     padding: 0;
-
-    }
-
-    #nav_bar {
-        width: 100%;
-        z-index: 1; 
-        position: fixed;
-        float: left;
-    }
-  
- </style>
-
-
-    <script>
-// Initialize and add the map
+<script>
+        // Initialize and add the map
 function initMap() {
-  // The location of Kent State (only for testing purposes)
-  var kent_state = {lat: 41.1406508, lng: -81.3461343};
+        // Creates the map, centered on Kent State University
+        var kent_State = {lat: 41.1406508, lng: -81.3461343};
+        var map = new google.maps.Map(
+            document.getElementById('map'), {zoom: 15, center: kent_State});
+    
+            infoWindow = new google.maps.InfoWindow;
 
-  var map = new google.maps.Map(
-      document.getElementById('map'), {zoom: 15, center: kent_state});
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
 
-  var marker = new google.maps.Marker({position: kent_state, map: map});
+            infoWindow.setPosition(pos);
+            infoWindow.setContent('Location found.');
+            infoWindow.open(map);
+            map.setCenter(pos);
+
+            }, function() {
+                handleLocationError(true, infoWindow, map.getCenter());
+            });
+
+        } else {
+            // Browser doesn't support Geolocation
+            handleLocationError(false, infoWindow, map.getCenter());
+        }
+
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                    'Error: The Geolocation service failed.' :
+                    'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+    }
+
+        var dispensers = [
+        
+        // This location will be removed once we get all the dispenser locations.
+        ['Kent State University', 41.1406508, -81.3461343, '<h1><b>Kent State University</b></h1>' 
+        + '<p><b>More Information:</b>' + '<a href="https://www.kent.edu/">'+
+        ' https://www.kent.edu/</a>'],
+        
+        ['Student Recreation Center', 41.141588, -81.340043, '<h1><b>Student Recreation and Wellness Center</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Information:</b>' + ' Located in the basement locker rooms.</p>'
+        + '<p><b>More Information:</b>' + '<a href="https://www.kent.edu/recservices">'+
+        ' https://www.kent.edu/recservices</a>'],
+        ];
+        
+        var infowindow = new google.maps.InfoWindow();
+
+        for (i = 0; i < dispensers.length; i++) {  
+        marker = new google.maps.Marker({
+        position: new google.maps.LatLng(dispensers[i][1], dispensers[i][2]),
+        map: map
+        });
+
+        google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+          infowindow.setContent(dispensers[i][3]);
+          infowindow.open(map, marker);
+        }
+        })(marker, i));
+
+         }
 }
-    </script>
+</script>
 
 <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgh8GWzkyvEprIotnrv-9ZYWvNQXpBCT8&callback=initMap">
 </script>
+
+<div id="mapNavContainer">
+    <div id="map"></div>
+        <ul id="navBarMap">
+            <li><a class="active" href="/index">Main Menu</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/resources">Resources</a></li>
+            <li><a href="/settings">Settings</a></li>
+        </ul>
+</div>
+
 {% endblock %}
