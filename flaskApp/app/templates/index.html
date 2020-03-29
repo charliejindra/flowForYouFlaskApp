@@ -4,7 +4,16 @@
 
 {% block content %}
 
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-firestore.js"></script>
+
 <script>
+
+
         // Initialize and add the map
 function initMap() {
         // Creates the map, centered on Kent State University
@@ -90,4 +99,47 @@ function initMap() {
         </ul>
 </div>
 
+
+
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyCDD-Y_2pFxNWukf-bkdWDmlQD-mqSYBwk",
+    authDomain: "ninja-firestore-tut-470a6.firebaseapp.com",
+    databaseURL: "https://ninja-firestore-tut-470a6.firebaseio.com",
+    projectId: "ninja-firestore-tut-470a6",
+    storageBucket: "ninja-firestore-tut-470a6.appspot.com",
+    messagingSenderId: "187246912286",
+    appId: "1:187246912286:web:5c0b3b7a22b2d3180a9f0f",
+    measurementId: "G-MLY5N0Z7R1"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  db.settings({ timestampsInSnapshots: true })
+  //firebase.analytics();
+</script>
+<script>
+    const dispensaryList = document.querySelector('#navBarMap');
+
+function renderDispensary(doc) {
+    let li = document.createElement('li');
+    let building = document.createElement('span');
+
+    li.setAttribute('data-id', doc.id);
+    name.textContent = doc.data().building;
+
+    li.appendChild(building);
+
+    dispensaryList.appendChild(li);
+}
+
+db.collection('dispensaries').get().then((snapshot) => {
+    snapshot.docs.forEach(doc => {
+        renderDispensary(doc);
+    })
+
+})
+</script>
 {% endblock %}
