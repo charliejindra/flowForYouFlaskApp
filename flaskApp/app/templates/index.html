@@ -21,7 +21,28 @@ function initMap() {
         var map = new google.maps.Map(
             document.getElementById('map'), {zoom: 15, center: kent_State});
     
-            infoWindow = new google.maps.InfoWindow;
+        infoWindow = new google.maps.InfoWindow;
+
+        // starts services to calculate distance between your location and dispensers
+        dms = new google.maps.DistanceMatrixService();
+        dirService = new google.maps.DirectionsService();
+        dirRenderer = new google.maps.DirectionsRenderer({preserveViewport:true});
+
+        // for testing when you're not on Kent's campus
+        // simply set the pos variable below to testLocations[i] with i being 0 to 3
+        var testPositions = [
+            {lat:41.148161, lng:-81.344848}, // on williams drive
+            {lat: 41.144162,lng: -81.341628}, // near aeronautics bldg
+            {lat:41.147064, lng:-81.339513}, // on eastway drive
+            {lat:41.149772, lng:-81.346146} //janik drive
+        ];
+
+        // var pos = { 
+        //             lat: position.coords.latitude,
+        //             lng: position.coords.longitude
+        //         };
+        var pos = testPositions[2];
+        console.log(pos);
 
         // Try HTML5 geolocation.
         if (navigator.geolocation) {
