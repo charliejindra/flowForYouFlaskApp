@@ -19,7 +19,7 @@ function initMap() {
         // Creates the map, centered on Kent State University
         var kent_State = {lat: 41.1406508, lng: -81.3461343};
         var map = new google.maps.Map(
-            document.getElementById('map'), {zoom: 15, center: kent_State});
+            document.getElementById('map'), {zoom: 18, center: kent_State});
     
         infoWindow = new google.maps.InfoWindow;
 
@@ -30,8 +30,11 @@ function initMap() {
 
         var pos = { 
                     //temporary fake location, comment this and uncomment next two lines for actual location use
-                    lat: 41.148132,
-                    lng: -81.344246
+                     
+                    lat: 41.144162,
+                    lng: -81.341628
+                    //lat: 41.148132,
+                    //lng: -81.344246
                     //lat: position.coords.latitude,
                     //lng: position.coords.longitude
                 };
@@ -39,13 +42,13 @@ function initMap() {
         // Try HTML5 geolocation.
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
-                pos = { 
-                    //temporary fake location, comment this and uncomment next two lines for actual location use
-                    lat: 41.148132,
-                    lng: -81.344246
-                    //lat: position.coords.latitude,
-                    //lng: position.coords.longitude
-                };
+                // pos = { 
+                //     //temporary fake location, comment this and uncomment next two lines for actual location use
+                //     lat: 41.144162,
+                //     lng: -81.341628
+                //     //lat: position.coords.latitude,
+                //     //lng: position.coords.longitude
+                // };
 
             infoWindow.setPosition(pos);
             
@@ -138,6 +141,9 @@ function initMap() {
 
         var infowindow = new google.maps.InfoWindow();
 
+        //list of markers for referencing later
+        var markerList = [];
+
         for (i = 0; i < dispensers.length; i++) {  
         marker = new google.maps.Marker({
         position: new google.maps.LatLng(dispensers[i][1], dispensers[i][2]),
@@ -148,14 +154,21 @@ function initMap() {
         return function() {
           infowindow.setContent(dispensers[i][3]);
           infowindow.open(map, marker);
+          console.log(marker);
         }
         })(marker, i));
 
+        //add marker to marker list
+        markerList.push(marker);
+
         }
+
+        //api limits number of dests in single query to 25
+        var dispenserCheckAmt = 25;
 
         //create array of dispenser locations for distance matrix api
         var dispenserLocs = [];
-        for (var i = 0; i < 15; ++i){
+        for (var i = 0; i < dispenserCheckAmt; ++i){
             dispenserLocs.push(dispensers[i][1] + "," + dispensers[i][2]);
         }
         console.log(dispenserLocs);
@@ -177,16 +190,46 @@ function initMap() {
 
         function getShortestDistance() {
 
+            var distanceJson;
+            //distance matrix query called to get walking distance from location to each dispenser
             dms.getDistanceMatrix(query, function(response, status) {
                 if (status == "OK") {
                     //populateTable(response.rows);
                     //replace this later with function that will display the closest dispenser
                     console.log("we done did it dammit, we done did");
                     console.log(response);
+                    distanceJson = response;
+                    findShortestDistance();
                 } else {
                     console.log(response + " " + status);
                 }
             });
+
+            //now time to actually find the closest dispenser
+            function findShortestDistance(){
+                console.log("we already did the query right?");
+                distances = distanceJson["rows"][0]["elements"];
+                //console.log(distances);
+
+                var closestDispenser = distances[0];
+                var closestDispenserNumber = 0;
+                console.log(closestDispenser);
+                for(var i = 0; i < distances.length; ++i){
+                    if(distances[i]["distance"]["value"] < closestDispenser["distance"]["value"]){
+                        console.log(distances[i]["distance"]["value"] + "<" + closestDispenser["distance"]["value"]);
+                        closestDispenser = distances[i];
+                        closestDispenserNumber = i;
+                    } else {
+                        console.log(distances[i]["distance"]["value"] + ">=" + closestDispenser["distance"]["value"]);
+                    }
+                }
+                console.log(closestDispenser);
+
+                //now time to display it!
+                infowindow.setContent(dispensers[closestDispenserNumber][3] + closestDispenser["distance"]["text"]);
+                marker = markerList[closestDispenserNumber];
+                infowindow.open(map, marker);
+            }
         }
 }
 </script>
