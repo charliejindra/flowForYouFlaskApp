@@ -55,10 +55,16 @@ function initMap() {
                 //     //lng: position.coords.longitude
                 // };
 
-            infoWindow.setPosition(pos);
+            //infoWindow.setPosition(pos);
             
-            infoWindow.setContent('Location found.');
-            infoWindow.open(map);
+            infoWindow.setContent('Your Location');
+
+            marker = new google.maps.Marker({
+            position: new google.maps.LatLng(pos["lat"], pos["lng"]),
+            map: map,
+            icon: "../static/resources/pinRed.png",
+            });
+            infoWindow.open(map, marker);
             map.setCenter(pos);
 
             }, function() {
@@ -152,7 +158,8 @@ function initMap() {
         for (i = 0; i < dispensers.length; i++) {  
             marker = new google.maps.Marker({
             position: new google.maps.LatLng(dispensers[i][1], dispensers[i][2]),
-            map: map
+            map: map,
+            icon: "../static/resources/pinBlue.png",
             });
 
             google.maps.event.addListener(marker, 'click', (function(marker, i) {
