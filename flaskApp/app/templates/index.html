@@ -25,8 +25,13 @@ function initMap() {
 
         // starts services to calculate distance between your location and dispensers
         dms = new google.maps.DistanceMatrixService();
-        dirService = new google.maps.DirectionsService();
-        dirRenderer = new google.maps.DirectionsRenderer({preserveViewport:true});
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer({preserveViewport:true});
+        // // show directions to nearest dispenser
+        // var directionsService = new google.maps.DirectionsService();
+        // var directionsRenderer = new google.maps.DirectionsRenderer();
+        
+        directionsRenderer.setMap(map);
 
         // for testing when you're not on Kent's campus
         // simply set the pos variable below to testLocations[i] with i being 0 to 3
@@ -198,9 +203,7 @@ function initMap() {
             unitSystem: google.maps.UnitSystem.IMPERIAL
         };
 
-        getShortestDistance();
-
-        function getShortestDistance() {
+        function getShortestDistance(originLoc) {
 
             var distanceJson;
             //distance matrix query called to get walking distance from location to each dispenser
@@ -241,13 +244,45 @@ function initMap() {
                 infowindow.setContent(dispensers[closestDispenserNumber][3] + closestDispenser["distance"]["text"]);
                 marker = markerList[closestDispenserNumber];
                 infowindow.open(map, marker);
+
+                calculateAndDisplayRoute(directionsService, directionsRenderer, originLoc, dispensers[closestDispenserNumber]);
             }
         }
-}
+
+        getShortestDistance(originLoc);
+
+        var onChangeHandler = function() {
+          calculateAndDisplayRoute(directionsService, directionsRenderer);
+        };
+        // document.getElementById('start').addEventListener('change', onChangeHandler);
+        // document.getElementById('end').addEventListener('change', onChangeHandler);
+      }
+
+        function calculateAndDisplayRoute(directionsService, directionsRenderer, originLoc, destLoc) {
+            //testing in the console whether we actually got useful information
+            console.log("from " + originLoc);
+            console.log("to " + destLoc[1] + "," + destLoc[2]);
+            console.log(destLoc);
+            // Lorigin = string(originLoc);
+            Ldest = destLoc[1] + "," + destLoc[2];
+            directionsService.route(
+                {
+                origin: originLoc.toString(),
+                destination: Ldest.toString(),
+                travelMode: 'WALKING'
+                },
+                function(response, status) {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(response);
+                } else {
+                    window.alert('Directions request failed due to ' + status);
+                }
+            });
+        }
 </script>
 
 <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgh8GWzkyvEprIotnrv-9ZYWvNQXpBCT8&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvsTV4dKJhgdtxt54eZ-bxLuxKI78kyZA&callback=initMap">
 </script>
 
 <div id="mapNavContainer">
