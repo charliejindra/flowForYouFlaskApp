@@ -1,19 +1,62 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}">
 
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.13.2/firebase-app.js"></script>
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+     <script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-firestore.js"></script>
+     
+          
 {% extends "base.html" %}
 
 {% block content %}
 
-<!-- The core Firebase JS SDK is always required and must be listed first -->
-<script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-app.js"></script>
 
 <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
-<script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-firestore.js"></script>
 
 <script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyCrA1YkQJU9lf1tunCNYayg67QKhOQXEok",
+    authDomain: "flowforyou-82126.firebaseapp.com",
+    databaseURL: "https://flowforyou-82126.firebaseio.com",
+    projectId: "flowforyou-82126",
+    storageBucket: "flowforyou-82126.appspot.com",
+    messagingSenderId: "464936460609",
+    appId: "1:464936460609:web:f0c0b73b51ee20498001c0"
+  };
+  const firebase = require("firebase");
+  firebase.on('ready', () => {
+    mainWindow = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: false
+        }
+    });
+});
+// Required for side-effects
+require("firebase/firestore");
+
+// Initialize Cloud Firestore through Firebase
+firebase.initializeApp({
+  apiKey: "AIzaSyCrA1YkQJU9lf1tunCNYayg67QKhOQXEok",
+  authDomain: "flowforyou-82126.firebaseapp.com",
+  projectId: "flowforyou-82126"
+});
+var db = firebase.firestore();
+db.collection("dispensaries").add({
+    location: "Student Wellness Center"
+})
+.then(function(docRef) {
+    console.log("Document written with ID: ", docRef.id);
+})
+.catch(function(error) {
+    console.error("Error adding document: ", error);
+});
+</script>
 
 
+<script>
         // Initialize and add the map
 function initMap() {
         // Creates the map, centered on Kent State University
@@ -121,46 +164,4 @@ function initMap() {
 </div>
 
 
-
-
-<script>
-  // Your web app's Firebase configuration
-  var firebaseConfig = {
-    apiKey: "AIzaSyCDD-Y_2pFxNWukf-bkdWDmlQD-mqSYBwk",
-    authDomain: "ninja-firestore-tut-470a6.firebaseapp.com",
-    databaseURL: "https://ninja-firestore-tut-470a6.firebaseio.com",
-    projectId: "ninja-firestore-tut-470a6",
-    storageBucket: "ninja-firestore-tut-470a6.appspot.com",
-    messagingSenderId: "187246912286",
-    appId: "1:187246912286:web:5c0b3b7a22b2d3180a9f0f",
-    measurementId: "G-MLY5N0Z7R1"
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  db.settings({ timestampsInSnapshots: true })
-  //firebase.analytics();
-</script>
-<script>
-    const dispensaryList = document.querySelector('#navBarMap');
-
-function renderDispensary(doc) {
-    let li = document.createElement('li');
-    let building = document.createElement('span');
-
-    li.setAttribute('data-id', doc.id);
-    name.textContent = doc.data().building;
-
-    li.appendChild(building);
-
-    dispensaryList.appendChild(li);
-}
-
-db.collection('dispensaries').get().then((snapshot) => {
-    snapshot.docs.forEach(doc => {
-        renderDispensary(doc);
-    })
-
-})
-</script>
 {% endblock %}
