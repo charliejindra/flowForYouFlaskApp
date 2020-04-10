@@ -14,13 +14,13 @@
 
 <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
-
+<!--
 <script>
   // Your web app's Firebase configuration
   var firebaseConfig = {
     apiKey: "AIzaSyCrA1YkQJU9lf1tunCNYayg67QKhOQXEok",
     authDomain: "flowforyou-82126.firebaseapp.com",
-    databaseURL: "https://flowforyou-82126.firebaseio.com",
+    databaseURL: "https://floxzwforyou-82126.firebaseio.com",
     projectId: "flowforyou-82126",
     storageBucket: "flowforyou-82126.appspot.com",
     messagingSenderId: "464936460609",
@@ -43,291 +43,29 @@ firebase.initializeApp({
   authDomain: "flowforyou-82126.firebaseapp.com",
   projectId: "flowforyou-82126"
 });
-var db = firebase.firestore();
-db.collection("dispensaries").add({
-    location: "Student Wellness Center"
-})
-.then(function(docRef) {
-    console.log("Document written with ID: ", docRef.id);
-})
-.catch(function(error) {
-    console.error("Error adding document: ", error);
-});
-</script>
 
+
+var db = firebase.database();
+var building;
+var floor;
+//var locationID = "3uMc77sMjH97Yh8cnMiU";
+building = "Bowman Hall";
+var location = "Second Floor RestRoom";
+var mens;
+var universal;
+
+function writeUserData(projectId, building, mens, universal) {
+  firebase.database().ref('locations/' + '3uMc77sMjH97Yh8cnMiU/' + 'Bowman Hall' + 'TJoOi3fGF1OSk2Ge2z2d'.set({
+    mens: location
+  }));
+}
+
+</script>
+-->
 
 <script>
-
+        // Initialize and add the map
 function initMap() {
-
-    function getUserLocation(){
-        if (navigator.geolocation) {
-            //console.log("am able to get position");
-            navigator.geolocation.getCurrentPosition(function(position) {
-                result = { 
-                    //temporary fake location, comment this and uncomment next two lines for actual location use
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-
-                infoWindow.setPosition(result);
-                
-                infoWindow.setContent('Your Location');
-
-                marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(result["lat"], result["lng"]),
-                    map: map,
-                    icon: "../static/resources/pinRed.png",
-                });
-
-                infoWindow.open(map, marker);
-                map.setCenter(result);
-
-                locationSuccessful();
-
-            }, function() {
-                handleLocationError(true, infoWindow, map.getCenter());
-            });
-
-        } else {
-            // Browser doesn't support Geolocation
-            handleLocationError(false, infoWindow, map.getCenter());
-        }
-        //console.log("this is result at line 93: " + result);
-    }
-
-    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-            infoWindow.setPosition(pos);
-            infoWindow.setContent(browserHasGeolocation ?
-                        'Error: The Geolocation service failed.' :
-                        'Error: Your browser doesn\'t support geolocation.');
-            infoWindow.open(map);
-    }
-
-    //now time to actually find the closest dispenser
-    function findShortestDistance(distanceJson, originLoc) {
-        console.log("we already did the query right?");
-        distances = distanceJson["rows"][0]["elements"];
-        //console.log(distances);
-
-        var closestDispenser = distances[0];
-        var closestDispenserNumber = 0;
-        console.log(closestDispenser);
-        for(var i = 0; i < distances.length; ++i){
-            if(distances[i]["distance"]["value"] < closestDispenser["distance"]["value"]){
-                console.log(distances[i]["distance"]["value"] + "<" + closestDispenser["distance"]["value"]);
-                closestDispenser = distances[i];
-                closestDispenserNumber = i;
-            } else {
-                console.log(distances[i]["distance"]["value"] + ">=" + closestDispenser["distance"]["value"]);
-            }
-        }
-        console.log(closestDispenser);
-
-
-        //now time to display it!
-        infowindow.setContent(dispensers[closestDispenserNumber][3] + closestDispenser["distance"]["text"]);
-        marker = markerList[closestDispenserNumber];
-        infowindow.open(map, marker);
-
-        calculateAndDisplayRoute(directionsService, directionsRenderer, originLoc, dispensers[closestDispenserNumber]);
-    }
-
-    function getDistances(originLoc, query) {
-        var distanceJson;
-        //distance matrix query called to get walking distance from location to each dispenser
-        dms.getDistanceMatrix(query, function(response, status) {
-            if (status == "OK") {
-                //populateTable(response.rows);
-                //replace this later with function that will display the closest dispenser
-                console.log("we done did it dammit, we done did");
-                console.log(response);
-                distanceJson = response;
-                findShortestDistance(distanceJson, originLoc);
-            } else {
-                console.log(response + " " + status);
-            }
-        });
-    }
-
-    function calculateAndDisplayRoute(directionsService, directionsRenderer, originLoc, destLoc) {
-        //testing in the console whether we actually got useful information
-        console.log("from " + originLoc);
-        console.log("to " + destLoc[1] + "," + destLoc[2]);
-        console.log(destLoc);
-        // Lorigin = string(originLoc);
-        Ldest = destLoc[1] + "," + destLoc[2];
-        directionsService.route(
-            {
-            origin: originLoc.toString(),
-            destination: Ldest.toString(),
-            travelMode: 'WALKING'
-            },
-            function(response, status) {
-            if (status === 'OK') {
-                directionsRenderer.setDirections(response);
-            } else {
-                window.alert('Directions request failed due to ' + status);
-            }
-        });
-    }
-
-
-    //this runs the rest of the code on the outcome that the location grabbing was successful
-    //needed because location is async function
-    function locationSuccessful(){
-        var pos = result;
-        console.log("pos is now this: " + pos);
-
-        //api limits number of dests in single query to 25
-        var dispenserCheckAmt = 25;
-
-        //create array of dispenser locations for distance matrix api
-        var dispenserLocs = [];
-        for (var i = 0; i < dispenserCheckAmt; ++i){
-            dispenserLocs.push(dispensers[i][1] + "," + dispensers[i][2]);
-        }
-        console.log(dispenserLocs);
-        console.log(pos);
-        //set origin location based on postition
-        var originLoc = [];
-        //originLoc.push(pos["lat"] + "," + pos["lat"]);
-        originLoc.push(pos["lat"]+","+pos["lng"]);
-
-        //specifications for shortest distance calling
-        var query = {
-            origins: originLoc,
-            destinations: dispenserLocs,
-            travelMode: google.maps.TravelMode.WALKING,
-            unitSystem: google.maps.UnitSystem.IMPERIAL
-        };
-
-        getDistances(originLoc, query);
-    }
-
-        var dispensers = [
-            
-            ['Student Recreation Center', 41.141588, -81.340043, '<h1><b>Student Recreation and Wellness Center</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Information:</b>' + ' Located in the basement locker rooms.</p>'
-            + '<p><b>More Information:</b>' + '<a href="https://www.kent.edu/recservices">'+
-            ' https://www.kent.edu/recservices</a>'],
-
-            ['Aeronautics and Technology Building', 41.144371, -81.341203, '<h1><b>Aeronautics and Technology Building</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['Math and Computer Science Building', 41.145092, -81.341406, '<h1><b>Math and Computer Science Building</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female and Male</p>'],
-
-            ['Henderson Hall', 41.145236, -81.340086, '<h1><b>Henderson Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['Cunningham Hall', 41.146039, -81.341202, '<h1><b>Cunningham Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor, Research Wing.</p>'
-            + '<p><b>Gender:</b>' + ' Female and Male</p>'],
-
-            ['Smith Hall', 41.145756, -81.342094, '<h1><b>Smith Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['Intergrated Science Building and Williams Hall', 41.149385, -81.342477, '<h1><b>Intergrated Science Building and Williams Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female and Male</p>'],
-
-            ['University Library', 41.146864, -81.342036, '<h1><b>University Library</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Female dispensers located on the first and second floor. Male dispenser located on first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female and Male</p>'],
-            
-            ['Kent Student  Center', 41.147924, -81.342511, '<h1><b>Kent Student  Center</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Female dispensers located on the first and second floor. Male dispenser located on first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female and Male</p>'],
-
-            ['MACC Annex', 41.147982, -81.344297, '<h1><b>MACC Annex</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first and second floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['Center for Undergraduate Excellence', 41.148670, -81.345013, '<h1><b>Center for Undergraduate Excellence</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female and Male</p>'],
-
-            ['Bowman', 41.148580, -81.346597, '<h1><b>Bowman</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female and Male</p>'],
-
-            ['Satterfield', 41.148173, -81.347669, '<h1><b>Satterfield</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['Taylor Hall', 41.150213, -81.344005, '<h1><b>Taylor Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['Business Administration Building', 41.149017, -81.348049, '<h1><b>Business Administration Building</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['Center for the Visual Arts', 41.150261, -81.347436, '<h1><b>Center for the Visual Arts</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['Kent State Center for Performing Arts', 41.152620, -81.340462, '<h1><b>Kent State Center for Performing Arts</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female and Male</p>'],
-
-            ['Nixson Hall', 41.152083, -81.341841, '<h1><b>Nixson Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['White Hall', 41.152733, -81.345912, '<h1><b>White Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['Moulton Hall', 41.152966, -81.346684, '<h1><b>Moulton Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female and Male</p>'],
-
-            ['Lowry Hall', 41.152117, -81.347261, '<h1><b>Lowry Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['Merrill Hall', 41.151542, -81.348165, '<h1><b>Merrill Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the all floors.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['Cartwright Hall', 41.151224, -81.348798, '<h1><b>Cartwright Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first and second floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female and Male</p>'],
-
-            ['Kent Hall', 41.150930, -81.349428, '<h1><b>Kent Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first and second floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['McGilvery Hall', 41.150877, -81.350912, '<h1><b>McGilvery Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on all floors.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['Center for Architecture and Enviromental Design', 41.152496, -81.352119, '<h1><b>Center for Architecture and Enviromental Design</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female and Male</p>'],
-
-            ['Franklin Hall', 41.151593, -81.350987, '<h1><b>Franklin Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the third floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female and Male</p>'],
-
-            ['Rockwell Hall', 41.152810, -81.349923, '<h1><b>Rockwell Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-
-            ['Oscar Richie Hall', 41.151435, -81.346570, '<h1><b>Oscar Richie Hall</b></h1>'
-            + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
-            + '<p><b>Gender:</b>' + ' Female</p>'],
-            ];
-
-        var result;
-        var infowindow = new google.maps.InfoWindow();
-        
         // Creates the map, centered on Kent State University
         var kent_State = {lat: 41.1406508, lng: -81.3461343};
         var map = new google.maps.Map(
@@ -337,10 +75,8 @@ function initMap() {
 
         // starts services to calculate distance between your location and dispensers
         dms = new google.maps.DistanceMatrixService();
-        directionsService = new google.maps.DirectionsService();
-        directionsRenderer = new google.maps.DirectionsRenderer({preserveViewport:true});
-        
-        directionsRenderer.setMap(map);
+        dirService = new google.maps.DirectionsService();
+        dirRenderer = new google.maps.DirectionsRenderer({preserveViewport:true});
 
         // for testing when you're not on Kent's campus
         // simply set the pos variable below to testLocations[i] with i being 0 to 3
@@ -350,6 +86,175 @@ function initMap() {
             {lat:41.147064, lng:-81.339513}, // on eastway drive
             {lat:41.149772, lng:-81.346146} //janik drive
         ];
+
+        // var pos = { 
+        //             lat: position.coords.latitude,
+        //             lng: position.coords.longitude
+        //         };
+        var pos = testPositions[2];
+        console.log(pos);
+
+        // Try HTML5 geolocation.
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                // pos = { 
+                //     //temporary fake location, comment this and uncomment next two lines for actual location use
+                //     lat: 41.144162,
+                //     lng: -81.341628
+                //     //lat: position.coords.latitude,
+                //     //lng: position.coords.longitude
+                // };
+
+            //infoWindow.setPosition(pos);
+            
+            infoWindow.setContent('Your Location');
+
+            marker = new google.maps.Marker({
+            position: new google.maps.LatLng(pos["lat"], pos["lng"]),
+            map: map,
+            icon: "../static/resources/pinRed.png",
+            });
+            infoWindow.open(map, marker);
+            map.setCenter(pos);
+
+            }, function() {
+                handleLocationError(true, infoWindow, map.getCenter());
+            });
+
+        } else {
+            // Browser doesn't support Geolocation
+            handleLocationError(false, infoWindow, map.getCenter());
+        }
+
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(browserHasGeolocation ?
+                    'Error: The Geolocation service failed.' :
+                    'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+    }
+
+        var dispensers = [
+        
+        ['Student Recreation Center', 41.141588, -81.340043, '<h1><b>Student Recreation and Wellness Center</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Information:</b>' + ' Located in the basement locker rooms.</p>'
+        + '<p><b>More Information:</b>' + '<a href="https://www.kent.edu/recservices">'+
+        ' https://www.kent.edu/recservices</a>'],
+
+        ['Aeronautics and Technology Building', 41.144371, -81.341203, '<h1><b>Aeronautics and Technology Building</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['Math and Computer Science Building', 41.145092, -81.341406, '<h1><b>Math and Computer Science Building</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female and Male</p>'],
+
+        ['Henderson Hall', 41.145236, -81.340086, '<h1><b>Henderson Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['Cunningham Hall', 41.146039, -81.341202, '<h1><b>Cunningham Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor, Research Wing.</p>'
+        + '<p><b>Gender:</b>' + ' Female and Male</p>'],
+
+        ['Smith Hall', 41.145756, -81.342094, '<h1><b>Smith Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['Intergrated Science Building and Williams Hall', 41.149385, -81.342477, '<h1><b>Intergrated Science Building and Williams Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female and Male</p>'],
+
+        ['University Library', 41.146864, -81.342036, '<h1><b>University Library</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Female dispensers located on the first and second floor. Male dispenser located on first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female and Male</p>'],
+        
+        ['Kent Student  Center', 41.147924, -81.342511, '<h1><b>Kent Student  Center</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Female dispensers located on the first and second floor. Male dispenser located on first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female and Male</p>'],
+
+        ['MACC Annex', 41.147982, -81.344297, '<h1><b>MACC Annex</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first and second floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['Center for Undergraduate Excellence', 41.148670, -81.345013, '<h1><b>Center for Undergraduate Excellence</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female and Male</p>'],
+
+        ['Bowman', 41.148580, -81.346597, '<h1><b>Bowman</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female and Male</p>'],
+
+        ['Satterfield', 41.148173, -81.347669, '<h1><b>Satterfield</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['Taylor Hall', 41.150213, -81.344005, '<h1><b>Taylor Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['Business Administration Building', 41.149017, -81.348049, '<h1><b>Business Administration Building</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['Center for the Visual Arts', 41.150261, -81.347436, '<h1><b>Center for the Visual Arts</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['Kent State Center for Performing Arts', 41.152620, -81.340462, '<h1><b>Kent State Center for Performing Arts</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female and Male</p>'],
+
+        ['Nixson Hall', 41.152083, -81.341841, '<h1><b>Nixson Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['White Hall', 41.152733, -81.345912, '<h1><b>White Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['Moulton Hall', 41.152966, -81.346684, '<h1><b>Moulton Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female and Male</p>'],
+
+        ['Lowry Hall', 41.152117, -81.347261, '<h1><b>Lowry Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['Merrill Hall', 41.151542, -81.348165, '<h1><b>Merrill Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the all floors.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['Cartwright Hall', 41.151224, -81.348798, '<h1><b>Cartwright Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first and second floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female and Male</p>'],
+
+        ['Kent Hall', 41.150930, -81.349428, '<h1><b>Kent Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first and second floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['McGilvery Hall', 41.150877, -81.350912, '<h1><b>McGilvery Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on all floors.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['Center for Architecture and Enviromental Design', 41.152496, -81.352119, '<h1><b>Center for Architecture and Enviromental Design</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female and Male</p>'],
+
+        ['Franklin Hall', 41.151593, -81.350987, '<h1><b>Franklin Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the third floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female and Male</p>'],
+
+        ['Rockwell Hall', 41.152810, -81.349923, '<h1><b>Rockwell Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+
+        ['Oscar Richie Hall', 41.151435, -81.346570, '<h1><b>Oscar Richie Hall</b></h1>'
+        + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
+        + '<p><b>Gender:</b>' + ' Female</p>'],
+        ];
+
+        var infowindow = new google.maps.InfoWindow();
 
         //list of markers for referencing later
         var markerList = [];
@@ -374,13 +279,79 @@ function initMap() {
 
         }
 
-        getUserLocation();
+        //api limits number of dests in single query to 25
+        var dispenserCheckAmt = 25;
+
+        //create array of dispenser locations for distance matrix api
+        var dispenserLocs = [];
+        for (var i = 0; i < dispenserCheckAmt; ++i){
+            dispenserLocs.push(dispensers[i][1] + "," + dispensers[i][2]);
+        }
+        console.log(dispenserLocs);
+        console.log(pos);
+        //set origin location based on postition
+        var originLoc = [];
+        //originLoc.push(pos["lat"] + "," + pos["lat"]);
+        originLoc.push(pos["lat"]+","+pos["lng"]);
+
+        //specifications for shortest distance calling
+        var query = {
+            origins: originLoc,
+            destinations: dispenserLocs,
+            travelMode: google.maps.TravelMode.WALKING,
+            unitSystem: google.maps.UnitSystem.IMPERIAL
+        };
+
+        getShortestDistance();
+
+        function getShortestDistance() {
+
+            var distanceJson;
+            //distance matrix query called to get walking distance from location to each dispenser
+            dms.getDistanceMatrix(query, function(response, status) {
+                if (status == "OK") {
+                    //populateTable(response.rows);
+                    //replace this later with function that will display the closest dispenser
+                    console.log("we done did it dammit, we done did");
+                    console.log(response);
+                    distanceJson = response;
+                    findShortestDistance();
+                } else {
+                    console.log(response + " " + status);
+                }
+            });
+
+            //now time to actually find the closest dispenser
+            function findShortestDistance(){
+                console.log("we already did the query right?");
+                distances = distanceJson["rows"][0]["elements"];
+                //console.log(distances);
+
+                var closestDispenser = distances[0];
+                var closestDispenserNumber = 0;
+                console.log(closestDispenser);
+                for(var i = 0; i < distances.length; ++i){
+                    if(distances[i]["distance"]["value"] < closestDispenser["distance"]["value"]){
+                        console.log(distances[i]["distance"]["value"] + "<" + closestDispenser["distance"]["value"]);
+                        closestDispenser = distances[i];
+                        closestDispenserNumber = i;
+                    } else {
+                        console.log(distances[i]["distance"]["value"] + ">=" + closestDispenser["distance"]["value"]);
+                    }
+                }
+                console.log(closestDispenser);
+
+                //now time to display it!
+                infowindow.setContent(dispensers[closestDispenserNumber][3] + closestDispenser["distance"]["text"]);
+                marker = markerList[closestDispenserNumber];
+                infowindow.open(map, marker);
+            }
+        }
 }
-//async defer
 </script>
 
 <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvsTV4dKJhgdtxt54eZ-bxLuxKI78kyZA&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgh8GWzkyvEprIotnrv-9ZYWvNQXpBCT8&callback=initMap">
 </script>
 
 <div id="mapNavContainer">
