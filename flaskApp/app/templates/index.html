@@ -20,7 +20,7 @@
   var firebaseConfig = {
     apiKey: "AIzaSyCrA1YkQJU9lf1tunCNYayg67QKhOQXEok",
     authDomain: "flowforyou-82126.firebaseapp.com",
-    databaseURL: "https://flowforyou-82126.firebaseio.com",
+    databaseURL: "https://floxzwforyou-82126.firebaseio.com",
     projectId: "flowforyou-82126",
     storageBucket: "flowforyou-82126.appspot.com",
     messagingSenderId: "464936460609",
@@ -43,16 +43,22 @@ firebase.initializeApp({
   authDomain: "flowforyou-82126.firebaseapp.com",
   projectId: "flowforyou-82126"
 });
-var db = firebase.firestore();
-db.collection("dispensaries").add({
-    location: "Student Wellness Center"
-})
-.then(function(docRef) {
-    console.log("Document written with ID: ", docRef.id);
-})
-.catch(function(error) {
-    console.error("Error adding document: ", error);
-});
+
+
+var db = firebase.database();
+var building;
+var floor;
+//var locationID = "3uMc77sMjH97Yh8cnMiU";
+building = "Bowman Hall";
+var location = "Second Floor RestRoom";
+var mens;
+var universal = 
+function writeUserData(projectId, building, mens, universal) {
+  firebase.database().ref('locations/' + '3uMc77sMjH97Yh8cnMiU/' + 'Bowman Hall' + 'TJoOi3fGF1OSk2Ge2z2d'.set({
+    mens: location
+  }));
+}
+
 </script>
 
 
