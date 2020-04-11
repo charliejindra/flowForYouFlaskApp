@@ -15,7 +15,7 @@
   color: white;
   z-index: 100;
   height: auto;
-  position: fixed;
+  position: relative;
   margin: 10px 0px 0px 200px;
   border: 1px solid black;
   padding: 5px;
@@ -27,7 +27,7 @@
   background-color: #f1f1f1;
   color: white;
   height: auto;
-  position: fixed;
+  position: absolute;
   margin: 10px 0px 0px 200px;
   border: 1px solid black;
   padding: 5px;
@@ -212,12 +212,7 @@
     background-size: cover;
 }
 
-body {
-  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  padding: 50px 100px;
-  max-width: 55.25em;
-  font-family: 'Open Sans', sans-serif;
-}
+
 
 h5, h6, .info_reveal a {
   font-family: 'Open Sans Condensed', sans-serif;
