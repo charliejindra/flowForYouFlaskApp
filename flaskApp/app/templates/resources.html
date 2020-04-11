@@ -11,4 +11,86 @@
     <li><a href="/settings">Settings</a></li>
 </ul>
 
+<body style="background-color:pink;">
+
+
+<br><br><br><br><br><br>
+<br><br><br><br><br><br>
+
+<ul class="responsive_grid">
+  <li>
+    <div class="team_member">
+       <div class="info">
+         <img src="{{ url_for('static',filename='resources/healthcenter.jpg') }}" alt=""/>
+         <h5>Deweese Health Center</h5>
+         <h6>If you experience any health issues or have questions</h6> 
+      </div>
+      <div class="info_reveal">
+        <h6>Contact<br/>Director Julie Volcheck</h6>
+        <p><a href="https://www.kent.edu/uhs">Website</a></p>
+        <p>330-672-2322</p>
+      </div>
+    </div>
+  </li>
+  <li>
+
+    <div class="team_member">
+       <div class="info">
+         <img src="{{ url_for('static',filename='resources/womenscenter.jpg') }}" alt=""/>
+         <h5>Womens Center</h5>
+         <h6>A place where Women support Women.</h6> 
+      </div>
+      <div class="info_reveal">
+        <h6>Contact<br/>Director Cassandra Pegg-Kirby</h6>
+        <p><a href="https://www.kent.edu/womenscenter/about-us">Website</a></p>
+        <p>330-672-9230</p>
+      </div>
+    </div>
+  </li>
+  
+    <li>
+    <div class="team_member">
+       <div class="info">
+         <img src="{{ url_for('static',filename='resources/auntflow.jpg') }}" alt=""/>
+         <h5>Aunt Flow</h5>
+         <h6>People helping people, period.</h6> 
+      </div>
+      <div class="info_reveal">
+        <h6>Contact<br/>CEO Claire Coder</h6>
+        <p><a href="https://www.goauntflow.com/">Website</a></p>
+        <p>claire@auntflow.org</p>
+      </div>
+    </div>
+  </li>
+
+  <li>
+    <div class="team_member">
+       <div class="info">
+         <img src="{{ url_for('static',filename='resources/schwarts.jpeg') }}" alt=""/>
+         <h5>Sexual and Relationship Violence Services</h5>
+         <h6>Provides Students with Sexual Assault Support </h6> 
+      </div>
+      <div class="info_reveal">
+        <h6>Contact<br/>Coordinator Yvette Roberts</h6>
+        <p><a href="https://www.kent.edu/srvss">Website</a></p>
+        <p>330-672-8016</p>
+      </div>
+    </div>
+  </li>
+  
+    <li>
+    <div class="team_member">
+       <div class="info">
+         <img src="{{ url_for('static',filename='resources/pp.jpg') }}" alt=""/>
+         <h5>Planned Parenthood</h5>
+         <h6>Sexual Healthcare Provider</h6> 
+      </div>
+      <div class="info_reveal">
+        <h6>Contact<br/>Ohio Contact</h6>
+        <p><a href="https://www.plannedparenthood.org/about-us/contact-us">Website</a></p>
+        <p>1-800-230-PLAN</p>
+      </div>
+    </div>
+  </li> 
+
 {% endblock %}
