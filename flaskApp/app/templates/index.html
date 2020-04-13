@@ -2,64 +2,199 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
-<script src="https://www.gstatic.com/firebasejs/7.13.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-database.js"></script>
 
-     <script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-firestore.js"></script>
-     
+<script>
+    
+    
+    var firebaseConfig = {
+      apiKey: "AIzaSyCrA1YkQJU9lf1tunCNYayg67QKhOQXEok",
+      authDomain: "flowforyou-82126.firebaseapp.com",
+      databaseURL: "https://flowforyou-82126.firebaseio.com",
+      projectId: "flowforyou-82126",
+      storageBucket: "flowforyou-82126.appspot.com",
+      messagingSenderId: "464936460609",
+      appId: "1:464936460609:web:f0c0b73b51ee20498001c0"
+    };
+    // Initialize Firebase
+    //make parameters with values to pass into createDispenserData function, then pass in reference, id, status, and data variables to function
+    //function will then push this data via the ref variable to the database
+    firebase.initializeApp(firebaseConfig);
+    console.log(firebase);
+    var database = firebase.database();
+
+    var ATBref1 = database.ref('database/Aeronautics and Technology Building/dispensers/dispenser1');
+    var ATBref2 = database.ref('database/Aeronautics and Technology Building/dispensers/dispenser2');
+    var BowmanRef1 =  database.ref('database/Bowman Hall/dispensers/dispenser1');
+    var BowmanRef2 =  database.ref('database/Aeronautics and Technology Building/dispensers/dispenser2');
+    var BowmanRef3 =  database.ref('database/Aeronautics and Technology Building/dispensers/dispenser3');
+    var BusinessAdminBuildingRef1 =  database.ref('database/Business Administration Building/dispensers/dispenser1');
+    var BusinessAdminBuildingRef2 =  database.ref('database/Business Administration Building/dispensers/dispenser2');
+    var CartwrightHallRef1 = database.ref('database/Cartwright Hall/dispensers/dispenser1');
+    var CartwrightHallRef2 = database.ref('database/Cartwright Hall/dispensers/dispenser2');
+    var CFAEDRef1 = database.ref('database/Center for Architecture and Environmental Design/dispensers/dispenser1');
+    var CFAEDRef2 = database.ref('database/Center for Architecture and Environmental Design/dispensers/dispenser2');
+    var CFAEDRef3 = database.ref('database/Center for Architecture and Environmental Design/dispensers/dispenser3');
+    var CUERef1 = database.ref('database/Center for Undergraduate Excellence/dispensers/dispenser1');
+    var CUERef2 = database.ref('database/Center for Undergraduate Excellence/dispensers/dispenser2');
+    var CUERef3 = database.ref('database/Center for Undergraduate Excellence/dispensers/dispenser3');
+    var CVARef1 = database.ref('database/Center for the Visual Arts/dispensers/dispenser1');
+    var CVARef2 = database.ref('database/Center for the Visual Arts/dispensers/dispenser2');
+    var CunninghamRef1 = database.ref('database/Cunningham Hall/dispensers/dispenser1');
+    var CunninghamRef2 = database.ref('database/Cunningham Hall/dispensers/dispenser2');
+    var CunninghamRef3 = database.ref('database/Cunningham Hall/dispensers/dispenser3');
+    var FranklinRef1 = database.ref('database/Franklin Hall/dispensers/dispenser1');
+    var FranklinRef2 = database.ref('database/Franklin Hall/dispensers/dispenser2');
+    var FranklinRef3 = database.ref('database/Franklin Hall/dispensers/dispenser3');
+    var HendersonRef1 = database.ref('database/Henderson Hall/dispensers/dispenser1');
+    var HendersonRef2 = database.ref('database/Henderson Hall/dispensers/dispenser2');    
+    var ISBWHRef1 = database.ref('database/integrated Science Building and Williams Hall/dispensers/dispenser1');
+    var ISBWHRef2 = database.ref('database/integrated Science Building and Williams Hall/dispensers/dispenser2');
+    var ISBWHRef3 = database.ref('database/integrated Science Building and Williams Hall/dispensers/dispenser3');
+    var KentHallRef1 = database.ref('database/Kent Hall/dispensers/dispenser1');
+    var KentHallRef2 = database.ref('database/Kent Hall/dispensers/dispenser2');
+    var CenterForPerformingArtsRef1 = database.ref('database/Kent State Center for Performing Arts/dispensers/dispenser1');
+    var CenterForPerformingArtsRef2 = database.ref('database/Kent State Center for Performing Arts/dispensers/dispenser2');
+    var CenterForPerformingArtsRef3 = database.ref('database/Kent State Center for Performing Arts/dispensers/dispenser3');
+    var KentStudentCenterRef1 = database.ref('database/Kent Student Center/dispensers/dispenser1');
+    var KentStudentCenterRef2 = database.ref('database/Kent Student Center/dispensers/dispenser2');
+    var KentStudentCenterRef3 = database.ref('database/Kent Student Center/dispensers/dispenser3');
+    var KentStudentCenterRef4 = database.ref('database/Kent Student Center/dispensers/dispenser4');
+    var LowryHallRef = database.ref('database/Lowry Hall/dispensers/dispenser1');
+    var MACCRef = database.ref('database/MACC Annex/dispensers/dispenser1');
+    var MathCompSciRef1 = database.ref('database/Math and Computer Science Building/dispensers/dispenser1');
+    var MathCompSciRef2 = database.ref('database/Math and Computer Science Building/dispensers/dispenser2');
+    var McGilveryRef = database.ref('database/McGilvery Hall/dispensers/dispenser1');
+    var MerrillHallRef = database.ref('database/Merrill Hall/dispensers/dispenser1');
+    var MoultonHallRef1 = database.ref('database/Moulton Hall/dispensers/dispenser1');
+    var MoultonHallRef2 = database.ref('database/Moulton Hall/dispensers/dispenser2');
+    var NixsonHallRef1 = database.ref('database/Nixson Hall/dispensers/dispenser1');
+    var NixsonHallRef2 = database.ref('database/Nixson Hall/dispensers/dispenser2');
+    var OscarRichieHallRef = database.ref('database/Oscar Richie Hall/dispensers/dispenser1');
+    var RockwellHallRef = database.ref('database/Rockwell Hall/dispensers/dispenser1');
+    var SatterfieldRef = database.ref('database/Satterfield/dispensers/dispenser1');
+    var SmithHallRef1 = database.ref('database/Smith Hall/dispensers/dispenser1');
+    var SmithHallRef2 = database.ref('database/Smith Hall/dispensers/dispenser2');
+    var StudentWellnessRef1 = database.ref('database/Student Wellness Center/dispensers/dispenser1');
+    var StudentWellnessRef2 = database.ref('database/Student Wellness Center/dispensers/dispenser2');
+    var StudentWellnessRef3 = database.ref('database/Student Wellness Center/dispensers/dispenser3');
+    var TaylorHallRef1 = database.ref('database/Taylor Hall/dispensers/dispenser1');
+    var TaylorHallRef2 = database.ref('database/Taylor Hall/dispensers/dispenser2');
+    var UniversityLibRef1 = database.ref('database/University Library/dispensers/dispenser1');
+    var UniversityLibRef2 = database.ref('database/University Library/dispensers/dispenser2');
+    var UniversityLibRef3 = database.ref('database/University Library/dispensers/dispenser3');
+    var UniversityLibRef4 = database.ref('database/University Library/dispensers/dispenser4');
+    var WhiteHallRef = UniversityLibRef1 = database.ref('database/White Hall/dispensers/dispenser1');
+    
+    //create variables for references, ids, restrooms, status, and data containing all that info
+    
+    var MenRestroom = "Men First Floor Restroom";
+    var WomenRestroom = "Women First Floor Restroom";
+    var UniversalRestroom = "Universal First Floor Restroom";
+    var UniversalThirdFloorRestroom = "Universal Third Floor Restroom";
+    var MenLockerRoom = "Men's Lower Level Locker Room Restroom";
+    var WomenLockerRoom = "Women's Lower Level Locker Room Restroom";
+    var UniversalLockerRoom = "Universal Lower Level Locker Room";
+    var UniversalLowerLevelRestroom = "Universal Lower Level Restroom";
+    var restroomNA = "N/A";
+    var MenMultiRestroom = "Men's First Floor Multi Restroom";
+    var WomenMultiRestroom = "Women's First Floor Multi Restroom";
+    var UniversalMultiRestroom = "Universal Multi Restroom"
+    var MenSecondFloorRestroom = "Men's Second Floor Restroom";
+    var WomenSecondFloorRestroom = "Women's Second Floor Restroom";
+    var WomenThirdFloorRestroom = "Women's Third Floor Restroom";
+    var WomenSecondFloorMultiRestroom = "Women's Second Floor Multi Restroom";
+    var MenThirdFloorRestroom = "Men's Third Floor Restroom";
+    var WomenResearchWingRestroom = "Women's First Floor Research Wing Restroom";
+    var MenResearchWingRestroom = "Men's First Floor Research Wing Restroom";
+    
+    var id1 = "1";
+    var id2 = "2";
+    var id3 = "3";
+    var id4 = "4";
+    var FullStatus = "full";
+    var EmptyStatus = "empty";
+    var NearEmptyStatus = "almost empty";
+
+
+    function createDispenserData(ref, id, restroom, status) {
+        var data = {
+            Location: restroom,
+            ID: id,
+            Status: status
+        }
+        ref.push(data);
+    }
+    
+    createDispenserData(ATBref1, id1, WomenMultiRestroom, FullStatus);
+    createDispenserData(ATBref2, id2, MenRestroom, FullStatus);
+    createDispenserData(StudentWellnessRef1, id1, WomenLockerRoom, FullStatus);
+    createDispenserData(StudentWellnessRef2, id2, MenLockerRoom, FullStatus);
+    createDispenserData(StudentWellnessRef3, id3, UniversalLockerRoom, FullStatus);
+    createDispenserData(HendersonRef1, id1, WomenRestroom, FullStatus);
+    createDispenserData(HendersonRef2,id2, UniversalRestroom, FullStatus);
+    createDispenserData(MathCompSciRef1, id1, WomenRestroom, FullStatus);
+    createDispenserData(MathCompSciRef2, id2, MenRestroom, FullStatus);
+    createDispenserData(CunninghamRef1, id1, WomenResearchWingRestroom, FullStatus);
+    createDispenserData(CunninghamRef1, id2, MenResearchWingRestroom, FullStatus);
+    createDispenserData(CunninghamRef1, id3, UniversalRestroom, FullStatus);
+    createDispenserData(SmithHallRef1, id1, MenRestroom, FullStatus);
+    createDispenserData(SmithHallRef2, id2, UniversalRestroom, FullStatus);
+    createDispenserData(ISBWHRef1, id1, WomenMultiRestroom, FullStatus);
+    createDispenserData(ISBWHRef2, id2, MenMultiRestroom, FullStatus);
+    createDispenserData(ISBWHRef3, id3, UniversalRestroom, FullStatus);
+    createDispenserData(UniversityLibRef1, id1, WomenMultiRestroom, FullStatus);
+    createDispenserData(UniversityLibRef2, id2, WomenSecondFloorMultiRestroom, FullStatus);
+    createDispenserData(UniversityLibRef3, id3, MenMultiRestroom, FullStatus);
+    createDispenserData(UniversityLibRef4, id4, UniversalRestroom, FullStatus);
+    createDispenserData(KentStudentCenterRef1, id1, WomenMultiRestroom, FullStatus);
+    createDispenserData(KentStudentCenterRef2, id2, WomenSecondFloorMultiRestroom, FullStatus);
+    createDispenserData(KentStudentCenterRef3, id3, MenMultiRestroom, FullStatus);
+    createDispenserData(KentStudentCenterRef4, id4, MenThirdFloorRestroom, FullStatus);
+    createDispenserData(MACCRef, id1, WomenSecondFloorRestroom, FullStatus);
+    createDispenserData(CUERef1, id1, WomenRestroom, FullStatus);
+    createDispenserData(CUERef2, MenRestroom, id2, FullStatus);
+    createDispenserData(CUERef3, id3, UniversalRestroom, FullStatus);
+    createDispenserData(BowmanRef1, id1, WomenRestroom, FullStatus);
+    createDispenserData(BowmanRef2, id2, MenRestroom, FullStatus);
+    createDispenserData(BowmanRef3, id3, UniversalLowerLevelRestroom, FullStatus);
+    createDispenserData(SatterfieldRef, id1, WomenRestroom, FullStatus);
+    createDispenserData(TaylorHallRef1, id1, WomenRestroom, FullStatus);
+    createDispenserData(TaylorHallRef2, id2, UniversalLowerLevelRestroom, FullStatus);
+    createDispenserData(BusinessAdminBuildingRef1, id1, WomenRestroom, FullStatus);
+    createDispenserData(BusinessAdminBuildingRef2, id2, UniversalRestroom, FullStatus);
+    createDispenserData(CVARef1, id1, WomenRestroom, FullStatus);
+    createDispenserData(CVARef2, id2, UniversalLowerLevelRestroom, FullStatus);
+    createDispenserData(CenterForPerformingArtsRef1, id1, WomenRestroom, FullStatus);
+    createDispenserData(CenterForPerformingArtsRef2, id2, MenRestroom, FullStatus);
+    createDispenserData(CenterForPerformingArtsRef3, id3, UniversalRestroom, FullStatus);
+    createDispenserData(NixsonHallRef1, id1, WomenRestroom, FullStatus);
+    createDispenserData(NixsonHallRef2, id2, UniversalLowerLevelRestroom, FullStatus);
+    createDispenserData(WhiteHallRef, id1, WomenRestroom, FullStatus);
+    createDispenserData(MoultonHallRef1, id1, WomenRestroom, FullStatus);
+    createDispenserData(MoultonHallRef2, id2, MenRestroom, FullStatus);
+    createDispenserData(LowryHallRef, id1, WomenRestroom, FullStatus);
+    createDispenserData(MerrillHallRef, id1, WomenThirdFloorRestroom, FullStatus);
+    createDispenserData(CartwrightHallRef1, id1, WomenSecondFloorRestroom, FullStatus);
+    createDispenserData(CartwrightHallRef2, id2, MenSecondFloorRestroom, FullStatus);
+    createDispenserData(KentHallRef1, id1, WomenSecondFloorRestroom, FullStatus);
+    createDispenserData(KentHallRef2, id2, UniversalLowerLevelRestroom, FullStatus);
+    createDispenserData(McGilveryRef, id1, WomenThirdFloorRestroom, FullStatus);
+    createDispenserData(CFAEDRef1, id1, WomenRestroom, FullStatus);
+    createDispenserData(CFAEDRef2, id2, MenRestroom, FullStatus);
+    createDispenserData(FranklinRef1, id1, WomenRestroom, FullStatus);
+    createDispenserData(FranklinRef2, id2, MenRestroom, FullStatus);
+    createDispenserData(FranklinRef3, id3, UniversalThirdFloorRestroom, FullStatus);
+    createDispenserData(RockwellHallRef, id1, WomenRestroom, FullStatus);
+    createDispenserData(OscarRichieHallRef, id1, WomenRestroom, FullStatus);
+    </script>
+
           
 {% extends "base.html" %}
 
 {% block content %}
-
-
-<!-- TODO: Add SDKs for Firebase products that you want to use
-     https://firebase.google.com/docs/web/setup#available-libraries -->
-
-<script>
-  // Your web app's Firebase configuration
-  var firebaseConfig = {
-    apiKey: "AIzaSyCrA1YkQJU9lf1tunCNYayg67QKhOQXEok",
-    authDomain: "flowforyou-82126.firebaseapp.com",
-    databaseURL: "https://floxzwforyou-82126.firebaseio.com",
-    projectId: "flowforyou-82126",
-    storageBucket: "flowforyou-82126.appspot.com",
-    messagingSenderId: "464936460609",
-    appId: "1:464936460609:web:f0c0b73b51ee20498001c0"
-  };
-  const firebase = require("firebase");
-  firebase.on('ready', () => {
-    mainWindow = new BrowserWindow({
-        webPreferences: {
-            nodeIntegration: false
-        }
-    });
-});
-// Required for side-effects
-require("firebase/firestore");
-
-// Initialize Cloud Firestore through Firebase
-firebase.initializeApp({
-  apiKey: "AIzaSyCrA1YkQJU9lf1tunCNYayg67QKhOQXEok",
-  authDomain: "flowforyou-82126.firebaseapp.com",
-  projectId: "flowforyou-82126"
-});
-
-var db = firebase.database();
-var building;
-var floor;
-//var locationID = "3uMc77sMjH97Yh8cnMiU";
-building = "Bowman Hall";
-var location = "Second Floor RestRoom";
-var mens;
-var universal;
-
-function writeUserData(projectId, building, mens, universal) {
-  firebase.database().ref('locations/' + '3uMc77sMjH97Yh8cnMiU/' + 'Bowman Hall' + 'TJoOi3fGF1OSk2Ge2z2d'.set({
-    mens: location
-  }));
-}
-
-</script>
 
 
 <script>
