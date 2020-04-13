@@ -198,58 +198,32 @@
 
 
 <script>
-        // Initialize and add the map
-function initMap() {
-        // Creates the map, centered on Kent State University
-        var kent_State = {lat: 41.1406508, lng: -81.3461343};
-        var map = new google.maps.Map(
-            document.getElementById('map'), {zoom: 18, center: kent_State, mapTypeControl: false});
-    
-        infoWindow = new google.maps.InfoWindow;
+ function initMap() {
 
-        // starts services to calculate distance between your location and dispensers
-        dms = new google.maps.DistanceMatrixService();
-        dirService = new google.maps.DirectionsService();
-        dirRenderer = new google.maps.DirectionsRenderer({preserveViewport:true});
-
-        // for testing when you're not on Kent's campus
-        // simply set the pos variable below to testLocations[i] with i being 0 to 3
-        var testPositions = [
-            {lat:41.148161, lng:-81.344848}, // on williams drive
-            {lat: 41.144162,lng: -81.341628}, // near aeronautics bldg
-            {lat:41.147064, lng:-81.339513}, // on eastway drive
-            {lat:41.149772, lng:-81.346146} //janik drive
-        ];
-
-        //var pos = { 
-        //            lat: position.coords.latitude,
-        //            lng: position.coords.longitude
-        //        };
-        var pos = testPositions[2];
-        console.log(pos);
-
-        // Try HTML5 geolocation.
+    function getUserLocation(){
         if (navigator.geolocation) {
+            //console.log("am able to get position");
             navigator.geolocation.getCurrentPosition(function(position) {
-                // pos = { 
-                //     //temporary fake location, comment this and uncomment next two lines for actual location use
-                //     lat: 41.144162,
-                //     lng: -81.341628
-                //     //lat: position.coords.latitude,
-                //     //lng: position.coords.longitude
-                // };
+                result = { 
+                    //temporary fake location, comment this and uncomment next two lines for actual location use
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
 
-            //infoWindow.setPosition(pos);
-            
-            infoWindow.setContent('Your Location');
+                infoWindow.setPosition(result);
+                
+                infoWindow.setContent('Your Location');
 
-            marker = new google.maps.Marker({
-            position: new google.maps.LatLng(pos["lat"], pos["lng"]),
-            map: map,
-            icon: "../static/resources/pinRed.png",
-            });
-            infoWindow.open(map, marker);
-            map.setCenter(pos);
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(result["lat"], result["lng"]),
+                    map: map,
+                    icon: "../static/resources/pinRed.png",
+                });
+
+                infoWindow.open(map, marker);
+                map.setCenter(result);
+
+                locationSuccessful();
 
             }, function() {
                 handleLocationError(true, infoWindow, map.getCenter());
@@ -259,16 +233,120 @@ function initMap() {
             // Browser doesn't support Geolocation
             handleLocationError(false, infoWindow, map.getCenter());
         }
-
-    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-        infoWindow.setPosition(pos);
-        infoWindow.setContent(browserHasGeolocation ?
-                    'Error: The Geolocation service failed.' :
-                    'Error: Your browser doesn\'t support geolocation.');
-        infoWindow.open(map);
+        //console.log("this is result at line 93: " + result);
     }
 
-        var dispensers = [
+    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(browserHasGeolocation ?
+                        'Error: The Geolocation service failed.' :
+                        'Error: Your browser doesn\'t support geolocation.');
+            infoWindow.open(map);
+    }
+
+    //now time to actually find the closest dispenser
+    function findShortestDistance(distanceJson, originLoc) {
+        console.log("we already did the query right?");
+        distances = distanceJson["rows"][0]["elements"];
+        //console.log(distances);
+
+        var closestDispenser = distances[0];
+        var closestDispenserNumber = 0;
+        console.log(closestDispenser);
+        for(var i = 0; i < distances.length; ++i){
+            if(distances[i]["distance"]["value"] < closestDispenser["distance"]["value"]){
+                console.log(distances[i]["distance"]["value"] + "<" + closestDispenser["distance"]["value"]);
+                closestDispenser = distances[i];
+                closestDispenserNumber = i;
+            } else {
+                console.log(distances[i]["distance"]["value"] + ">=" + closestDispenser["distance"]["value"]);
+            }
+        }
+        console.log(closestDispenser);
+
+
+        //now time to display it!
+        infowindow.setContent(dispensers[closestDispenserNumber][3] + closestDispenser["distance"]["text"]);
+        marker = markerList[closestDispenserNumber];
+        infowindow.open(map, marker);
+
+        calculateAndDisplayRoute(directionsService, directionsRenderer, originLoc, dispensers[closestDispenserNumber]);
+    }
+
+    function getDistances(originLoc, query) {
+        var distanceJson;
+        //distance matrix query called to get walking distance from location to each dispenser
+        dms.getDistanceMatrix(query, function(response, status) {
+            if (status == "OK") {
+                //populateTable(response.rows);
+                //replace this later with function that will display the closest dispenser
+                console.log("we done did it dammit, we done did");
+                console.log(response);
+                distanceJson = response;
+                findShortestDistance(distanceJson, originLoc);
+            } else {
+                console.log(response + " " + status);
+            }
+        });
+    }
+
+    function calculateAndDisplayRoute(directionsService, directionsRenderer, originLoc, destLoc) {
+        //testing in the console whether we actually got useful information
+        console.log("from " + originLoc);
+        console.log("to " + destLoc[1] + "," + destLoc[2]);
+        console.log(destLoc);
+        // Lorigin = string(originLoc);
+        Ldest = destLoc[1] + "," + destLoc[2];
+        directionsService.route(
+            {
+            origin: originLoc.toString(),
+            destination: Ldest.toString(),
+            travelMode: 'WALKING'
+            },
+            function(response, status) {
+            if (status === 'OK') {
+                directionsRenderer.setDirections(response);
+            } else {
+                window.alert('Directions request failed due to ' + status);
+            }
+        });
+    }
+
+
+    //this runs the rest of the code on the outcome that the location grabbing was successful
+    //needed because location is async function
+    function locationSuccessful(){
+        var pos = result;
+        console.log("pos is now this: " + pos);
+
+        //api limits number of dests in single query to 25
+        var dispenserCheckAmt = 25;
+
+        //create array of dispenser locations for distance matrix api
+        var dispenserLocs = [];
+        for (var i = 0; i < dispenserCheckAmt; ++i){
+            dispenserLocs.push(dispensers[i][1] + "," + dispensers[i][2]);
+        }
+        console.log(dispenserLocs);
+        console.log(pos);
+        //set origin location based on postition
+        var originLoc = [];
+        //originLoc.push(pos["lat"] + "," + pos["lat"]);
+        originLoc.push(pos["lat"]+","+pos["lng"]);
+
+        //specifications for shortest distance calling
+        var query = {
+            origins: originLoc,
+            destinations: dispenserLocs,
+            travelMode: google.maps.TravelMode.WALKING,
+            unitSystem: google.maps.UnitSystem.IMPERIAL
+        };
+
+        getDistances(originLoc, query);
+    }
+
+        
+    var dispensers = [
         
         ['Student Recreation Center', 41.141588, -81.340043, '<h1><b>Student Recreation and Wellness Center</b></h1>'
         + '<p id="dispenserInformation"><b>Dispenser Information:</b>' + ' Located in the basement locker rooms.</p>'
@@ -388,7 +466,32 @@ function initMap() {
         + '<p><b>Gender:</b>' + ' Female</p>'],
         ];
 
+
+        var result;
         var infowindow = new google.maps.InfoWindow();
+        
+        // Creates the map, centered on Kent State University
+        var kent_State = {lat: 41.1406508, lng: -81.3461343};
+        var map = new google.maps.Map(
+            document.getElementById('map'), {zoom: 18, center: kent_State});
+    
+        infoWindow = new google.maps.InfoWindow;
+
+        // starts services to calculate distance between your location and dispensers
+        dms = new google.maps.DistanceMatrixService();
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer({preserveViewport:true});
+        
+        directionsRenderer.setMap(map);
+
+        // for testing when you're not on Kent's campus
+        // simply set the pos variable below to testLocations[i] with i being 0 to 3
+        var testPositions = [
+            {lat:41.148161, lng:-81.344848}, // on williams drive
+            {lat: 41.144162,lng: -81.341628}, // near aeronautics bldg
+            {lat:41.147064, lng:-81.339513}, // on eastway drive
+            {lat:41.149772, lng:-81.346146} //janik drive
+        ];
 
         //list of markers for referencing later
         var markerList = [];
@@ -413,76 +516,8 @@ function initMap() {
 
         }
 
-        //api limits number of dests in single query to 25
-        var dispenserCheckAmt = 25;
-
-        //create array of dispenser locations for distance matrix api
-        var dispenserLocs = [];
-        for (var i = 0; i < dispenserCheckAmt; ++i){
-            dispenserLocs.push(dispensers[i][1] + "," + dispensers[i][2]);
-        }
-        console.log(dispenserLocs);
-        console.log(pos);
-        //set origin location based on postition
-        var originLoc = [];
-        //originLoc.push(pos["lat"] + "," + pos["lat"]);
-        originLoc.push(pos["lat"]+","+pos["lng"]);
-
-        //specifications for shortest distance calling
-        var query = {
-            origins: originLoc,
-            destinations: dispenserLocs,
-            travelMode: google.maps.TravelMode.WALKING,
-            unitSystem: google.maps.UnitSystem.IMPERIAL
-        };
-
-        getShortestDistance();
-
-        function getShortestDistance() {
-
-            var distanceJson;
-            //distance matrix query called to get walking distance from location to each dispenser
-            dms.getDistanceMatrix(query, function(response, status) {
-                if (status == "OK") {
-                    //populateTable(response.rows);
-                    //replace this later with function that will display the closest dispenser
-                    console.log("we done did it dammit, we done did");
-                    console.log(response);
-                    distanceJson = response;
-                    findShortestDistance();
-                } else {
-                    console.log(response + " " + status);
-                }
-            });
-
-            //now time to actually find the closest dispenser
-            function findShortestDistance(){
-                console.log("we already did the query right?");
-                distances = distanceJson["rows"][0]["elements"];
-                //console.log(distances);
-
-                var closestDispenser = distances[0];
-                var closestDispenserNumber = 0;
-                console.log(closestDispenser);
-                for(var i = 0; i < distances.length; ++i){
-                    if(distances[i]["distance"]["value"] < closestDispenser["distance"]["value"]){
-                        console.log(distances[i]["distance"]["value"] + "<" + closestDispenser["distance"]["value"]);
-                        closestDispenser = distances[i];
-                        closestDispenserNumber = i;
-                    } else {
-                        console.log(distances[i]["distance"]["value"] + ">=" + closestDispenser["distance"]["value"]);
-                    }
-                }
-                console.log(closestDispenser);
-
-                //now time to display it!
-                infowindow.setContent(dispensers[closestDispenserNumber][3] + closestDispenser["distance"]["text"]);
-                marker = markerList[closestDispenserNumber];
-                infowindow.open(map, marker);
-            }
-        }
+        getUserLocation();
 }
-
 function w3_open() {
       document.getElementById("mySidebar").style.display = "block";
 }
@@ -493,7 +528,8 @@ function w3_close() {
 </script>
 
 <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgh8GWzkyvEprIotnrv-9ZYWvNQXpBCT8&callback=initMap">
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCvsTV4dKJhgdtxt54eZ-bxLuxKI78kyZA&callback=initMap">
+
 </script>
 
 
