@@ -214,13 +214,10 @@
                 
                 infoWindow.setContent('Your Location');
 
-                marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(result["lat"], result["lng"]),
-                    map: map,
-                    icon: "../static/resources/pinRed.png",
-                });
+                myLocMarker["position"] = new google.maps.LatLng(result["lat"], result["lng"]);
+                myLocMarker["icon"] = "../static/resources/pinRed.png";
 
-                infoWindow.open(map, marker);
+                infoWindow.open(map, myLocMarker);
                 map.setCenter(result);
 
                 locationSuccessful();
@@ -239,7 +236,7 @@
     function handleLocationError(browserHasGeolocation, infoWindow, pos) {
             infoWindow.setPosition(pos);
             infoWindow.setContent(browserHasGeolocation ?
-                        'Error: The Geolocation service failed.' :
+                        'Error: The Geolocation service failed. Please turn on geolocation and refresh.' :
                         'Error: Your browser doesn\'t support geolocation.');
             infoWindow.open(map);
     }
@@ -280,7 +277,7 @@
             if (status == "OK") {
                 //populateTable(response.rows);
                 //replace this later with function that will display the closest dispenser
-                console.log("we done did it dammit, we done did");
+                console.log(status);
                 console.log(response);
                 distanceJson = response;
                 findShortestDistance(distanceJson, originLoc);
@@ -310,6 +307,10 @@
                 window.alert('Directions request failed due to ' + status);
             }
         });
+        var locURL = `https://www.google.com/maps/dir/${originLoc.toString()}/${Ldest.toString()}`;
+        infoWindow.setContent(`Your location<br/><a href=${locURL}>Directions</a>`);
+        infoWindow.open(map, myLocMarker);
+        console.log(`https://www.google.com/maps/dir/${originLoc.toString()}/${Ldest.toString()}`);
     }
 
 
@@ -466,6 +467,10 @@
         + '<p><b>Gender:</b>' + ' Female</p>'],
         ];
 
+
+        myLocMarker = new google.maps.Marker({
+                    map: map
+        });
 
         var result;
         var infowindow = new google.maps.InfoWindow();
