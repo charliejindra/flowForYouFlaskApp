@@ -42,18 +42,7 @@
         dispenserList.appendChild(li);
     }
   */  
- //this is where all the dispenser locations are being collected and displayed in console
- var dispensers = database.collectionGroup('dispensers');
-  dispensers.get().then(function (querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, ' => ', doc.data());
-            //document.getElementById("dispenserInformation").innerHTML = (doc.id, " => ", doc.data());
-        });
-    })
-    .catch(function(error) {
-        console.log("Error getting documents: ", error);
-    });
+ 
     /*
     database.collection('database').get().then((snapshot) => {
         snapshot.docs.forEach(doc => {
@@ -73,7 +62,7 @@
 <script>
  function initMap() {
 
-    function getUserLocation(){
+    function getUserLocation(markerList){
         if (navigator.geolocation) {
             //console.log("am able to get position");
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -93,7 +82,7 @@
                 infoWindow.open(map, myLocMarker);
                 map.setCenter(result);
 
-                locationSuccessful();
+                locationSuccessful(markerList);
 
             }, function() {
                 handleLocationError(true, infoWindow, map.getCenter());
@@ -115,7 +104,7 @@
     }
 
     //now time to actually find the closest dispenser
-    function findShortestDistance(distanceJson, originLoc) {
+    function findShortestDistance(distanceJson, originLoc, markerList) {
         console.log("we already did the query right?");
         distances = distanceJson["rows"][0]["elements"];
         //console.log(distances);
@@ -143,7 +132,7 @@
         calculateAndDisplayRoute(directionsService, directionsRenderer, originLoc, dispensers[closestDispenserNumber]);
     }
 
-    function getDistances(originLoc, query) {
+    function getDistances(originLoc, query, markerList) {
         var distanceJson;
         //distance matrix query called to get walking distance from location to each dispenser
         dms.getDistanceMatrix(query, function(response, status) {
@@ -153,7 +142,7 @@
                 console.log(status);
                 console.log(response);
                 distanceJson = response;
-                findShortestDistance(distanceJson, originLoc);
+                findShortestDistance(distanceJson, originLoc, markerList);
             } else {
                 console.log(response + " " + status);
             }
@@ -189,7 +178,7 @@
 
     //this runs the rest of the code on the outcome that the location grabbing was successful
     //needed because location is async function
-    function locationSuccessful(){
+    function locationSuccessful(markerList){
         var pos = result;
         console.log("pos is now this: " + pos);
 
@@ -216,10 +205,57 @@
             unitSystem: google.maps.UnitSystem.IMPERIAL
         };
 
-        getDistances(originLoc, query);
+        getDistances(originLoc, query, markerList);
     }
 
-        
+    function markerSetup(bldgListDb){
+        //list of markers for referencing later
+        var markerList = [];
+        var pinImg;
+        var dispStatusText;
+
+
+        for (i = 0; i < dispensers.length; i++) {  
+            // check if dispenser is full or empty for this marker
+            //console.log("here is bldg list db:" + bldgListDb);
+            //console.log(bldgListDb);
+            //console.log("here's building list db at key " + dispensers[i][0]);
+            //console.log(bldgListDb[dispensers[i][0]]);
+
+            //setting icon to green if empty, blue if full
+            if (bldgListDb[dispensers[i][0]]["dispenser"] == "full"){
+                pinImg = "../static/resources/pinBlue.png";
+            } else {
+                pinImg = "../static/resources/pinGreen.png";
+            }
+
+            marker = new google.maps.Marker({
+            position: new google.maps.LatLng(dispensers[i][1], dispensers[i][2]),
+            map: map,
+            icon: pinImg
+            });
+
+            google.maps.event.addListener(marker, 'click', (function(marker, i) {
+            return function() {
+                if(marker.icon == "../static/resources/pinBlue.png"){
+                    infowindow.setContent(dispensers[i][3] + "Dispensers are full!");
+                } else {
+                    infowindow.setContent(dispensers[i][3] + "Dispensers are empty :(");
+                }
+            
+            infowindow.open(map, marker);
+            console.log(marker);
+            }
+            })(marker, i));
+
+            //add marker to marker list
+            markerList.push(marker);
+
+        }
+
+        getUserLocation(markerList);
+    }    
+
     var dispensers = [
         
         ['Student Recreation Center', 41.141588, -81.340043, '<h1><b>Student Recreation and Wellness Center</b></h1>'
@@ -247,7 +283,7 @@
         + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
         + '<p><b>Gender:</b>' + ' Female</p>' + '<ul id="dispenser-list">' + '</ul>'],
 
-        ['Intergrated Science Building and Williams Hall', 41.149385, -81.342477, '<h1><b>Intergrated Science Building and Williams Hall</b></h1>'
+        ['Integrated Science Building and Williams Hall', 41.149385, -81.342477, '<h1><b>Intergrated Science Building and Williams Hall</b></h1>'
         + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
         + '<p><b>Gender:</b>' + ' Female and Male</p>' + '<ul id="dispenser-list">' + '</ul>'],
 
@@ -255,7 +291,7 @@
         + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Female dispensers located on the first and second floor. Male dispenser located on first floor.</p>'
         + '<p><b>Gender:</b>' + ' Female and Male</p>' + '<ul id="dispenser-list">' + '</ul>'],
         
-        ['Kent Student  Center', 41.147924, -81.342511, '<h1><b>Kent Student  Center</b></h1>'
+        ['Kent Student Center', 41.147924, -81.342511, '<h1><b>Kent Student  Center</b></h1>'
         + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Female dispensers located on the first and second floor. Male dispenser located on first floor.</p>'
         + '<p><b>Gender:</b>' + ' Female and Male</p>' + '<ul id="dispenser-list">' + '</ul>'],
 
@@ -267,7 +303,7 @@
         + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
         + '<p><b>Gender:</b>' + ' Female and Male</p>' + '<ul id="dispenser-list">' + '</ul>'],
 
-        ['Bowman', 41.148580, -81.346597, '<h1><b>Bowman</b></h1>'
+        ['Bowman Hall', 41.148580, -81.346597, '<h1><b>Bowman</b></h1>'
         + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
         + '<p><b>Gender:</b>' + ' Female and Male</p>' + '<ul id="dispenser-list">' + '</ul>'],
 
@@ -323,7 +359,7 @@
         + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on all floors.</p>'
         + '<p><b>Gender:</b>' + ' Female</p>' + '<ul id="dispenser-list">' + '</ul>'],
 
-        ['Center for Architecture and Enviromental Design', 41.152496, -81.352119, '<h1><b>Center for Architecture and Enviromental Design</b></h1>'
+        ['Center for Architecture and Environmental Design', 41.152496, -81.352119, '<h1><b>Center for Architecture and Enviromental Design</b></h1>'
         + '<p id="dispenserInformation"><b>Dispenser Location:</b>' + ' Located on the first floor.</p>'
         + '<p><b>Gender:</b>' + ' Female and Male</p>' + '<ul id="dispenser-list">' + '</ul>'],
 
@@ -371,30 +407,27 @@
             {lat:41.149772, lng:-81.346146} //janik drive
         ];
 
-        //list of markers for referencing later
-        var markerList = [];
-
-        for (i = 0; i < dispensers.length; i++) {  
-            marker = new google.maps.Marker({
-            position: new google.maps.LatLng(dispensers[i][1], dispensers[i][2]),
-            map: map,
-            icon: "../static/resources/pinBlue.png",
+        //this is where all the dispenser locations are being collected and displayed in console
+        var bldgListDb = {};
+        var db = database.collection('database');
+        db.get().then(function (querySnapshot) {
+                querySnapshot.forEach(function(doc) {
+                    // doc.data() is never undefined for query doc snapshots
+                    console.log(doc.id, ' => ', doc.data());
+                    
+                    bldgListDb[doc.id.toString()] = doc.data();
+                    //document.getElementById("dispenserInformation").innerHTML = (doc.id, " => ", doc.data());
+                });
+                markerSetup(bldgListDb);
+            })
+            .catch(function(error) {
+                console.log("Error getting documents: ", error);
             });
+        //bldgListDb["Student Recreation Center"] = {dispenser: "empty"};
+        //console.log(bldgListDb);
 
-            google.maps.event.addListener(marker, 'click', (function(marker, i) {
-            return function() {
-            infowindow.setContent(dispensers[i][3]);
-            infowindow.open(map, marker);
-            console.log(marker);
-            }
-            })(marker, i));
 
-            //add marker to marker list
-            markerList.push(marker);
-
-        }
-
-        getUserLocation();
+        
 }
 function w3_open() {
       document.getElementById("mySidebar").style.display = "block";
